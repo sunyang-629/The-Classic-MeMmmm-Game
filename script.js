@@ -16,7 +16,7 @@ const CARD_TECHS = [
 // add more when needed
 const game = {
   score: 0,
-  level: 3,
+  level: 1,
   timer: 60,
   interval: null,                                                   // interval's number,uses for clear it
   cardsDisplay: 0,                                                  //display how many cards
@@ -42,7 +42,6 @@ function setGame() {
   // register any element in your game object
   selectLevel(game.level);
   bindStartButton();
-  bindCardClick();
 }
 
 function selectLevel(level){
@@ -75,8 +74,9 @@ function setCardsDisplay(){                                                //mak
 function startGame() {
   setCardsDisplay();                                                                  
   for(let i = 0; i < game.cardsDisplay; i++){
-    $(game.card).prependTo($('div.game-board'));                         //add cards' div into html
-    $('.card:first-child').addClass(game.cardClasses[i][1]);             //add card-tech for new div apended to html
+    $(game.card).appendTo($('div.game-board'));                         //add cards' div into html
+    $('.card:last-child').addClass(game.cardClasses[i][1]);             //add card-tech for new div apended to html
+    bindCardClick($('.card:last-child'));
     }
   $('div.game-board').addClass(game.gridDisplayClass);                    //set grid for cards
   game.startButton = 'endgame'; 
@@ -85,18 +85,26 @@ function startGame() {
 
 function handleCardFlip() {
   if(game.selectingCard){
-    //compare
-    // = unbind
-    // = score
-    // = --
-    // != remove
+    if($('.card:eq(' + game.selectedCard + ')').attr('class') === $('.card:eq(' + game.selectingCard + ')').attr('class')){
+      console.log(game.selectedCard,$('.card:eq(' + game.selectedCard + ')').attr('class'));
+      unBindCardClick(game.selectedCard,game.selectingCard);
+      updateScore();
+      game.cardsDisplay -= 2;
+      if(!game.cardsDisplay){
+        nextLevel();
+      }
+    } else {
+          // != remove
+    }
     game.selectingCard = null;
     game.selectedCard = null;
     console.log(game.selectedCard,game.selectingCard);
   }
 }
 
-function nextLevel() {}
+function nextLevel() {
+  alert('next level')
+}
 
 function handleGameOver() {
   alert('Congratulations, your score is ' + game.score);
@@ -106,7 +114,11 @@ function handleGameOver() {
 /*******************************************
 /     UI update
 /******************************************/
-function updateScore() {}
+function updateScore() {
+  game.score += (game.level * game.timer);
+  game.scoreDisplay = game.score;
+  $('.game-stats__score--value').text(game.scoreDisplay);
+}
 
 function updateTimerDisplay() {
   game.interval = setInterval(() => {
@@ -133,13 +145,17 @@ function bindStartButton() {
   })
 }
 
-function unBindCardClick(card) {}
+function unBindCardClick(card1,card2) {
+  console.log($('.card:eq(' + card1 + ')'));
+  $('.card:eq(' + card1 + ')').off("click");
+  $('.card:eq(' + card2 + ')').off("click");
+}
 
-function bindCardClick() {
-  $(document).on('click','.card',function(event){
+function bindCardClick(cardClick) {
+  cardClick.on('click',function(event){
     $(this).addClass('card--flipped');                          //flip the card
     (game.selectedCard == null) ? game.selectedCard = $('.card').index(this) : game.selectingCard = $('.card').index(this);
-    console.log(game.selectedCard,game.selectingCard);
+    console.log("1",game.selectedCard,game.selectingCard);
     handleCardFlip();
   })
 }
