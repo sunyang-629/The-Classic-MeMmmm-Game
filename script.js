@@ -84,7 +84,7 @@ function startGame() {
 }
 
 function handleCardFlip() {
-  if(game.selectingCard){
+  if(game.selectingCard !== null){
     if($('.card:eq(' + game.selectedCard + ')').attr('class') === $('.card:eq(' + game.selectingCard + ')').attr('class')){
       console.log(game.selectedCard,$('.card:eq(' + game.selectedCard + ')').attr('class'));
       unBindCardClick(game.selectedCard,game.selectingCard);
@@ -94,7 +94,8 @@ function handleCardFlip() {
         nextLevel();
       }
     } else {
-          // != remove
+      $('.card:eq(' + game.selectedCard + ')').removeClass('card--flipped');
+      $('.card:eq(' + game.selectingCard + ')').removeClass('card--flipped');
     }
     game.selectingCard = null;
     game.selectedCard = null;
@@ -115,6 +116,7 @@ function handleGameOver() {
 /     UI update
 /******************************************/
 function updateScore() {
+
   game.score += (game.level * game.timer);
   game.scoreDisplay = game.score;
   $('.game-stats__score--value').text(game.scoreDisplay);
@@ -153,9 +155,11 @@ function unBindCardClick(card1,card2) {
 
 function bindCardClick(cardClick) {
   cardClick.on('click',function(event){
-    $(this).addClass('card--flipped');                          //flip the card
-    (game.selectedCard == null) ? game.selectedCard = $('.card').index(this) : game.selectingCard = $('.card').index(this);
-    console.log("1",game.selectedCard,game.selectingCard);
-    handleCardFlip();
+    $(this).addClass('card--flipped');                         //flip the card
+    setTimeout(() => {
+      (game.selectedCard == null) ? game.selectedCard = $('.card').index(this) : game.selectingCard = $('.card').index(this);
+      console.log("1",game.selectedCard,game.selectingCard);
+      handleCardFlip();
+    },500)
   })
 }
