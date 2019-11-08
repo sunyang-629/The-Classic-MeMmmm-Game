@@ -67,6 +67,10 @@ body {
   box-shadow: #8cdcda 0px 0 10px;
 }
 
+.game-instruction__disappear {
+  display: none;
+}
+
 .game-instruction__header {
   text-align: center;
   margin: 10px;
@@ -79,6 +83,18 @@ body {
   perspective: 600px;
   width: 600px;
   height: 600px;
+}
+
+.game-board__level1{
+  grid-template-columns: repeat(2,1fr);
+}
+
+.game-board__level2{
+  grid-template-columns: repeat(4,1fr);
+}
+
+.game-board__level3{
+  grid-template-columns: repeat(6,1fr);
 }
 
 .card {
