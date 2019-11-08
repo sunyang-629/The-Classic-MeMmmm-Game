@@ -16,18 +16,20 @@ const CARD_TECHS = [
 // add more when needed
 const game = {
   score: 0,
-  level: 1,
+  level: 3,
   timer: 60,
   interval: null,                                                   // interval's number,uses for clear it
-  cardsdisplay: 0,
+  cardsDisplay: 0,                                                  //display how many cards
   timerDisplay: null,
   scoreDisplay: null,
   levelDisplay: null,
   timerInterval: null,
   startButton: null,
-  cardClasses: [],
+  selectedCard: null,
+  selectingCard: null,                                               
+  cardClasses: [],                                                  //an array for storing selected card
   card: '<div class="card"><div class="card__face card__face--front"></div><div class="card__face card__face--back"></div></div>',
-  gridDispalyClass:null,
+  gridDisplayClass: null,                                          //which grid class should be selected
   // and much more
 };
 
@@ -38,27 +40,31 @@ setGame();
 /******************************************/
 function setGame() {
   // register any element in your game object
-  switch(game.level){
-    case 1:
-        game.cardsdisplay = 4;
-        game.gridDispalyClass = "game-board__level1";
-        break;
-    case 2:
-        game.cardsdisplay = 16;
-        game.gridDispalyClass = "game-board__level2";
-        break;
-    case 3:
-        game.cardsdisplay = 36;
-        game.gridDispalyClass = "game-board__level3";
-        break;
-  }
+  selectLevel(game.level);
   bindStartButton();
   bindCardClick();
 }
 
-function setCardsDispaly(){
+function selectLevel(level){
+  switch(level){
+    case 1:
+        game.cardsDisplay = 4;
+        game.gridDisplayClass = "game-board__level1";
+        break;
+    case 2:
+        game.cardsDisplay = 16;
+        game.gridDisplayClass = "game-board__level2";
+        break;
+    case 3:
+        game.cardsDisplay = 36;
+        game.gridDisplayClass = "game-board__level3";
+        break;
+  }
+}
+
+function setCardsDisplay(){                                                //make an array:cardClasses
   game.cardClasses = [];
-  for(let i = 0; i < game.cardsdisplay; i++){
+  for(let i = 0; i < game.cardsDisplay; i++){
   game.cardClasses.push([]);
   game.cardClasses[i][0] = Math.random();
   game.cardClasses[i][1] = CARD_TECHS[Math.floor((i%20)/2)];
@@ -67,21 +73,27 @@ function setCardsDispaly(){
 }
 
 function startGame() {
-  setCardsDispaly();
-  console.log(game.cardClasses);                                                                   
-    if(game.level = 1){
-      for(let i = 0; i < game.cardsdisplay; i++){
-        $(game.card).prependTo($('div.game-board'));                         //add cards' div into html
-        $('.card:first-child').addClass(game.cardClasses[i][1]);             //add card-tech for new div apended to html
-      }
-      $('div.game-board').addClass(game.gridDispalyClass);                    //set grid for cards
+  setCardsDisplay();                                                                  
+  for(let i = 0; i < game.cardsDisplay; i++){
+    $(game.card).prependTo($('div.game-board'));                         //add cards' div into html
+    $('.card:first-child').addClass(game.cardClasses[i][1]);             //add card-tech for new div apended to html
     }
-    game.startButton = 'endgame'; 
-    $('div.game-instruction').addClass('game-instruction__disappear');      //hide instruction
+  $('div.game-board').addClass(game.gridDisplayClass);                    //set grid for cards
+  game.startButton = 'endgame'; 
+  $('div.game-instruction').addClass('game-instruction__disappear');      //hide instruction
 }
 
 function handleCardFlip() {
-  console.log('object');
+  if(game.selectingCard){
+    //compare
+    // = unbind
+    // = score
+    // = --
+    // != remove
+    game.selectingCard = null;
+    game.selectedCard = null;
+    console.log(game.selectedCard,game.selectingCard);
+  }
 }
 
 function nextLevel() {}
@@ -97,7 +109,7 @@ function handleGameOver() {
 function updateScore() {}
 
 function updateTimerDisplay() {
-    game.interval = setInterval(() => {
+  game.interval = setInterval(() => {
     game.timer--;
     if(!game.timer){
       handleGameOver();
@@ -126,6 +138,8 @@ function unBindCardClick(card) {}
 function bindCardClick() {
   $(document).on('click','.card',function(event){
     $(this).addClass('card--flipped');                          //flip the card
+    (game.selectedCard == null) ? game.selectedCard = $('.card').index(this) : game.selectingCard = $('.card').index(this);
+    console.log(game.selectedCard,game.selectingCard);
     handleCardFlip();
   })
 }
