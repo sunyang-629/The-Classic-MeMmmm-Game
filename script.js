@@ -41,10 +41,23 @@ setGame();
 function setGame() {
   // register any element in your game object
   selectLevel(game.level);
-  bindStartButton();
+  if(game.level === 1){
+      bindStartButton();
+  }
+  else {
+    //clear
+    $('.game-board').empty();
+    //reset time
+    game.timer = 60;
+    //restart
+    startGame();
+  }
+
 }
 
 function selectLevel(level){
+  game.levelDisplay = level;
+  $('.game-stats__level--value').text(game.levelDisplay);
   switch(level){
     case 1:
         game.cardsDisplay = 4;
@@ -86,7 +99,7 @@ function startGame() {
 function handleCardFlip() {
   if(game.selectingCard !== null){
     if($('.card:eq(' + game.selectedCard + ')').attr('class') === $('.card:eq(' + game.selectingCard + ')').attr('class')){
-      console.log(game.selectedCard,$('.card:eq(' + game.selectedCard + ')').attr('class'));
+      // console.log(game.selectedCard,$('.card:eq(' + game.selectedCard + ')').attr('class'));
       unBindCardClick(game.selectedCard,game.selectingCard);
       updateScore();
       game.cardsDisplay -= 2;
@@ -99,12 +112,17 @@ function handleCardFlip() {
     }
     game.selectingCard = null;
     game.selectedCard = null;
-    console.log(game.selectedCard,game.selectingCard);
+    // console.log(game.selectedCard,game.selectingCard);
   }
 }
 
 function nextLevel() {
-  alert('next level')
+  game.level++;
+  if(game.level === 4){
+    handleGameOver();
+  } else {
+    setGame();
+  }
 }
 
 function handleGameOver() {
@@ -158,7 +176,7 @@ function bindCardClick(cardClick) {
     $(this).addClass('card--flipped');                         //flip the card
     setTimeout(() => {
       (game.selectedCard == null) ? game.selectedCard = $('.card').index(this) : game.selectingCard = $('.card').index(this);
-      console.log("1",game.selectedCard,game.selectingCard);
+      // console.log("1",game.selectedCard,game.selectingCard);
       handleCardFlip();
     },500)
   })
