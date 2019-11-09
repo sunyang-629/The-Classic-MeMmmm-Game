@@ -131,11 +131,17 @@ function handleCardFlip() {
       game.selectingCard = null;
       game.selectedCard = null;
     } else {
+      $(".card").off('click');
       setTimeout(() => {
         $('.card:eq(' + game.selectedCard+ ')').removeClass('card--flipped');
         $('.card:eq(' + game.selectingCard + ')').removeClass('card--flipped');
         game.selectingCard = null;
         game.selectedCard = null;
+        $(".card").on('click',function(event){
+          $(this).addClass('card--flipped');                         //flip the card
+          (game.selectedCard == null) ? game.selectedCard = $('.card').index(this) : game.selectingCard = $('.card').index(this);
+            handleCardFlip();
+        });
       },1500);
     }
   }
@@ -182,7 +188,6 @@ function updateTimerDisplay() {
 /******************************************/
 function bindStartButton() {
   $('.game-stats__button').click(function(event){
-    console.log('startbutton',game);
     if(game.startButton === null){                              // click start button first time
       console.log("start null");
       startGame();
@@ -216,11 +221,7 @@ function bindCardClick(cardClick) {
   cardClick.on('click',function(event){
     $(this).addClass('card--flipped');                         //flip the card
     (game.selectedCard == null) ? game.selectedCard = $('.card').index(this) : game.selectingCard = $('.card').index(this);
-    // setTimeout(() => {
-      
-      // console.log("1",game.selectedCard,game.selectingCard);
       handleCardFlip();
-    // },100)
   })
 }
 
