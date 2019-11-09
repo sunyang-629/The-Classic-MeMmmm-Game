@@ -36,12 +36,33 @@ const game = {
 setGame();
 
 /*******************************************
+/     resets
+/******************************************/
+function gameReset(){
+  game.score = 0;
+  game.level = 1;
+  game.timer = 60;
+  game.cardsDisplay = 0;                                                  //display how many cards
+  game.timerDisplay = null;
+  game.scoreDisplay = null;
+  game.levelDisplay = null;
+  game.timerInterval = null;
+  game.startButton = null;
+  game.selectedCard = null;
+  game.selectingCard = null;                                               
+  game.cardClasses = [];
+  game.card = '<div class="card"><div class="card__face card__face--front"></div><div class="card__face card__face--back"></div></div>';
+  game.gridDisplayClass = null;  
+}
+
+/*******************************************
 /     game process
 /******************************************/
 function setGame() {
   // register any element in your game object
   selectLevel(game.level);
   if(game.level === 1){
+    console.log('setgame',game);
       bindStartButton();
   }
   else {
@@ -85,15 +106,16 @@ function setCardsDisplay(){                                                //mak
 }
 
 function startGame() {
-  setCardsDisplay();                                                                  
+  setCardsDisplay();                                                                 
   for(let i = 0; i < game.cardsDisplay; i++){
     $(game.card).appendTo($('div.game-board'));                         //add cards' div into html
     $('.card:last-child').addClass(game.cardClasses[i][1]);             //add card-tech for new div apended to html
     bindCardClick($('.card:last-child'));
     }
+  game.timer = 60;
   $('div.game-board').addClass(game.gridDisplayClass);                    //set grid for cards
-  game.startButton = 'endgame'; 
   $('div.game-instruction').addClass('game-instruction__disappear');      //hide instruction
+  updateTimerDisplay();
 }
 
 function handleCardFlip() {
@@ -121,6 +143,7 @@ function nextLevel() {
   if(game.level === 4){
     handleGameOver();
   } else {
+    clearInterval(game.interval);
     setGame();
   }
 }
@@ -134,7 +157,6 @@ function handleGameOver() {
 /     UI update
 /******************************************/
 function updateScore() {
-
   game.score += (game.level * game.timer);
   game.scoreDisplay = game.score;
   $('.game-stats__score--value').text(game.scoreDisplay);
@@ -147,8 +169,7 @@ function updateTimerDisplay() {
       handleGameOver();
     }
     game.timerDisplay = game.timer + 's';
-    $('.game-timer__bar').text(game.timerDisplay);
-    $('.game-timer__bar').width((game.timer/60) * 550);
+    $('.game-timer__bar').text(game.timerDisplay).width((game.timer/60) * 550);
   }, 1000);
 }
 
@@ -157,11 +178,28 @@ function updateTimerDisplay() {
 /******************************************/
 function bindStartButton() {
   $('.game-stats__button').click(function(event){
+    console.log('startbutton',game);
     if(game.startButton === null){                              // click start button first time
-          startGame();
-          $(this).text('End Game');                             //change text for button
-          updateTimerDisplay();
-    }                 
+      console.log("start null");
+      startGame();
+      game.startButton = 'End Game'; 
+      $(this).text(game.startButton);                             //change text for button
+      // updateTimerDisplay();
+    } else if (game.startButton === 'End Game'){
+      handleGameOver()
+      game.startButton = 'Start Game'; 
+      $(this).text(game.startButton); 
+    } else if (game.startButton === 'Start Game'){
+      $('.game-board').empty();
+      $('div.game-board').removeClass(game.gridDisplayClass); 
+      gameReset();
+      game.startButton = 'End Game'; 
+      $(this).text(game.startButton); 
+      selectLevel(game.level);
+      $('.game-stats__score--value').text(game.score);
+      $('.game-timer__bar').text(game.timer).width((game.timer/60) * 550);
+      startGame();
+    }    
   })
 }
 
@@ -181,3 +219,4 @@ function bindCardClick(cardClick) {
     },500)
   })
 }
+
