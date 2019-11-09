@@ -112,7 +112,7 @@ function startGame() {
     $('.card:last-child').addClass(game.cardClasses[i][1]);             //add card-tech for new div apended to html
     bindCardClick($('.card:last-child'));
     }
-  game.timer = 60;
+  $('.game-timer__bar').text(game.timer + 's').width((game.timer/60) * 550);
   $('div.game-board').addClass(game.gridDisplayClass);                    //set grid for cards
   $('div.game-instruction').addClass('game-instruction__disappear');      //hide instruction
   updateTimerDisplay();
@@ -197,7 +197,6 @@ function bindStartButton() {
       $(this).text(game.startButton); 
       selectLevel(game.level);
       $('.game-stats__score--value').text(game.score);
-      $('.game-timer__bar').text(game.timer).width((game.timer/60) * 550);
       startGame();
     }    
   })
