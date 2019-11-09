@@ -125,17 +125,19 @@ function handleCardFlip() {
       updateScore();
       game.cardsDisplay -= 2;
       if(!game.cardsDisplay){
-        nextLevel();
+        clearInterval(game.interval);
+        setTimeout(() => nextLevel(),2000);
       }
+      game.selectingCard = null;
+      game.selectedCard = null;
     } else {
-      // setTimeout(() => {
-        $('.card:eq(' + game.selectedCard + ')').removeClass('card--flipped');
+      setTimeout(() => {
+        $('.card:eq(' + game.selectedCard+ ')').removeClass('card--flipped');
         $('.card:eq(' + game.selectingCard + ')').removeClass('card--flipped');
-      // },1500)
+        game.selectingCard = null;
+        game.selectedCard = null;
+      },1500);
     }
-    game.selectingCard = null;
-    game.selectedCard = null;
-    // console.log(game.selectedCard,game.selectingCard);
   }
 }
 
@@ -146,7 +148,6 @@ function nextLevel() {
   } else {
     $('.game-board').empty();
     $('div.game-board').removeClass(game.gridDisplayClass);
-    clearInterval(game.interval);
     setGame();
   }
 }
@@ -214,11 +215,12 @@ function unBindCardClick(card1,card2) {
 function bindCardClick(cardClick) {
   cardClick.on('click',function(event){
     $(this).addClass('card--flipped');                         //flip the card
-    setTimeout(() => {
-      (game.selectedCard == null) ? game.selectedCard = $('.card').index(this) : game.selectingCard = $('.card').index(this);
+    (game.selectedCard == null) ? game.selectedCard = $('.card').index(this) : game.selectingCard = $('.card').index(this);
+    // setTimeout(() => {
+      
       // console.log("1",game.selectedCard,game.selectingCard);
       handleCardFlip();
-    },500)
+    // },100)
   })
 }
 
