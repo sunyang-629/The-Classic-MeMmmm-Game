@@ -113,9 +113,6 @@ function startGame() {
   setCardsDisplayArray();                                                                 
   setCardsDisplay();
   game.startButton = 'End Game';                                        //change text for button
-  // $('.game-timer__bar').text(game.timer + 's').width((game.timer/game.timer) * 550);
-  // $('div.game-board').addClass(game.gridDisplayClass);                    //set grid for cards
-  // $('div.game-instruction').addClass('game-instruction__disappear');      //hide instruction
   updateTimerDisplay();
 }
 
@@ -226,7 +223,6 @@ function bindStartButton() {
 }
 
 function unBindCardClick(card1,card2) {
-  // console.log($('.card:eq(' + card1 + ')'));
   $('.card:eq(' + card1 + ')').off("click");
   $('.card:eq(' + card2 + ')').off("click");
 }
