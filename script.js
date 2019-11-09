@@ -66,8 +66,7 @@ function setGame() {
       bindStartButton();
   }
   else {
-    //clear
-    $('.game-board').empty();
+    //clear 
     //reset time
     game.timer = 60;
     //restart
@@ -120,7 +119,7 @@ function startGame() {
 
 function handleCardFlip() {
   if(game.selectingCard !== null){
-    if($('.card:eq(' + game.selectedCard + ')').attr('class') === $('.card:eq(' + game.selectingCard + ')').attr('class')){
+    if(($('.card:eq(' + game.selectedCard + ')').attr('class') === $('.card:eq(' + game.selectingCard + ')').attr('class')) && (game.selectedCard !== game.selectingCard)){
       // console.log(game.selectedCard,$('.card:eq(' + game.selectedCard + ')').attr('class'));
       unBindCardClick(game.selectedCard,game.selectingCard);
       updateScore();
@@ -129,8 +128,10 @@ function handleCardFlip() {
         nextLevel();
       }
     } else {
-      $('.card:eq(' + game.selectedCard + ')').removeClass('card--flipped');
-      $('.card:eq(' + game.selectingCard + ')').removeClass('card--flipped');
+      // setTimeout(() => {
+        $('.card:eq(' + game.selectedCard + ')').removeClass('card--flipped');
+        $('.card:eq(' + game.selectingCard + ')').removeClass('card--flipped');
+      // },1500)
     }
     game.selectingCard = null;
     game.selectedCard = null;
@@ -143,6 +144,8 @@ function nextLevel() {
   if(game.level === 4){
     handleGameOver();
   } else {
+    $('.game-board').empty();
+    $('div.game-board').removeClass(game.gridDisplayClass);
     clearInterval(game.interval);
     setGame();
   }
