@@ -68,7 +68,7 @@ function setGame() {
   else {
     //clear 
     //reset time
-    game.timer = 60;
+    game.timerDisplay = game.timer;
     //restart
     startGame();
   }
@@ -111,7 +111,7 @@ function startGame() {
     $('.card:last-child').addClass(game.cardClasses[i][1]);             //add card-tech for new div apended to html
     bindCardClick($('.card:last-child'));
     }
-  $('.game-timer__bar').text(game.timer + 's').width((game.timer/60) * 550);
+  $('.game-timer__bar').text(game.timer + 's').width((game.timer/game.timer) * 550);
   $('div.game-board').addClass(game.gridDisplayClass);                    //set grid for cards
   $('div.game-instruction').addClass('game-instruction__disappear');      //hide instruction
   updateTimerDisplay();
@@ -131,26 +131,43 @@ function handleCardFlip() {
       game.selectingCard = null;
       game.selectedCard = null;
     } else {
-      $(".card").off('click');
-      setTimeout(() => {
-        $('.card:eq(' + game.selectedCard+ ')').removeClass('card--flipped');
-        $('.card:eq(' + game.selectingCard + ')').removeClass('card--flipped');
-        game.selectingCard = null;
-        game.selectedCard = null;
-        $(".card").on('click',function(event){
-          $(this).addClass('card--flipped');                         //flip the card
-          (game.selectedCard == null) ? game.selectedCard = $('.card').index(this) : game.selectingCard = $('.card').index(this);
-            handleCardFlip();
-        });
-      },1500);
+      if(game.selectedCard !== game.selectingCard){
+        $(".card").off('click');
+        setTimeout(() => {
+          flipBack();
+        },1500);        
+      } else {
+        $(".card").off('click');
+        flipBack();
+      } 
     }
   }
+}
+
+function flipBack(){
+  $('.card:eq(' + game.selectedCard+ ')').removeClass('card--flipped');
+  $('.card:eq(' + game.selectingCard + ')').removeClass('card--flipped');
+  game.selectingCard = null;
+  game.selectedCard = null;
+  $(".card").on('click',function(event){
+    $(this).addClass('card--flipped');                         //flip the card
+    (game.selectedCard == null) ? game.selectedCard = $('.card').index(this) : game.selectingCard = $('.card').index(this);
+      handleCardFlip();
+  });
 }
 
 function nextLevel() {
   game.level++;
   if(game.level === 4){
     handleGameOver();
+    $('.game-board').empty();
+    $('div.game-board').removeClass(game.gridDisplayClass); 
+    gameReset();
+    game.startButton = 'End Game'; 
+    $(this).text(game.startButton); 
+    selectLevel(game.level);
+    $('.game-stats__score--value').text(game.score);
+    startGame();
   } else {
     $('.game-board').empty();
     $('div.game-board').removeClass(game.gridDisplayClass);
@@ -167,19 +184,19 @@ function handleGameOver() {
 /     UI update
 /******************************************/
 function updateScore() {
-  game.score += (game.level * game.timer);
+  game.score += (game.level * game.timerDisplay);
   game.scoreDisplay = game.score;
   $('.game-stats__score--value').text(game.scoreDisplay);
 }
 
 function updateTimerDisplay() {
+  game.timerDisplay = game.timer;
   game.interval = setInterval(() => {
-    game.timer--;
-    if(!game.timer){
+    game.timerDisplay--;
+    $('.game-timer__bar').text(game.timerDisplay + 's').width((game.timerDisplay/game.timer) * 550);
+    if(!game.timerDisplay){
       handleGameOver();
     }
-    game.timerDisplay = game.timer + 's';
-    $('.game-timer__bar').text(game.timerDisplay).width((game.timer/60) * 550);
   }, 1000);
 }
 
