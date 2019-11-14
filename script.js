@@ -146,7 +146,7 @@ function handleCardFlip() {
       }
       clearSelectedCard();
     } else {
-      $(".card").off("click touchstart");
+      $(".card").off("click touch");
       if (game.selectedCard !== game.selectingCard) {
         setTimeout(() => {
           flipBack();
@@ -231,7 +231,7 @@ function bindStartButton() {
     }
     $(".game-stats__button").text(game.startButton);
   });
-  $(".game-stats__button").touchstart(event => {
+  $(".game-stats__button").touch(event => {
     if (game.startButton === null) {
       // click start button first time
       startGame();
@@ -245,12 +245,12 @@ function bindStartButton() {
 }
 
 function unBindCardClick(card1, card2) {
-  $(".card:eq(" + card1 + ")").off("click touchstart");
-  $(".card:eq(" + card2 + ")").off("click touchstart");
+  $(".card:eq(" + card1 + ")").off("click touch");
+  $(".card:eq(" + card2 + ")").off("click touch");
 }
 
 function bindCardClick(cardClick) {
-  cardClick.on("click touchstart", function(event) {
+  cardClick.on("click touch", function(event) {
     $(this).addClass("card--flipped"); //flip the card
     game.selectedCard == null
       ? (game.selectedCard = $(".card").index(this))
